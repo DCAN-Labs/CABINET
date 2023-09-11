@@ -118,11 +118,11 @@
                 },
                 {
                     "host_path":"/home/faird/shared/code/external/pipelines/nibabies_test_binds/atlases/dHCP/dHCP.week42.L.sphere.surf.gii",
-                    "container_path":"${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-L_den-32k_sphere.surf.gii:ro"
+                    "container_path":"/${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-L_den-32k_sphere.surf.gii:ro"
                 },
                 {
                     "host_path": "/home/faird/shared/code/external/pipelines/nibabies_test_binds/atlases/dHCP/dHCP.week42.R.sphere.surf.gii",
-                    "container_path":"${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-R_den-32k_sphere.surf.gii:ro"
+                    "container_path":"/${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-R_den-32k_sphere.surf.gii:ro"
                 }
             ],
             "positional_args": [
