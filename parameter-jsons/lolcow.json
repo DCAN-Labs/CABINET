@@ -10,6 +10,10 @@
             "sif_filepath": "/home/faird/tikal004/lolcow.sif"
         },
         {
+            "name": "dockerfail",
+            "sif_filepath": "/home/faird/tikal004/dockerfail.sif"
+        },
+        {
             "name": "lolcow-exec",
             "action": "exec",
             "sif_filepath": "/home/faird/tikal004/lolcow.sif",

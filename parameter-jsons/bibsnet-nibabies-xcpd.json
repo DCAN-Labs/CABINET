@@ -41,7 +41,7 @@
         },
         {  
             "name":"nibabies",
-            "sif_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08142023.sif",
+            "sif_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08282023a.sif",
             "singularity_args": {
                 "--cleanenv": true
             },
@@ -72,7 +72,6 @@
             ],
             "flags": {
                 "--project-goodvoxels": true,
-                "--surface-recon-method": "mcribs",
                 "--omp-nthreads": 3,
                 "--resource-monitor": true,
                 "--cifti-output": "91k",
@@ -81,7 +80,9 @@
                 "--fd-radius": 35,
                 "--derivatives": "/derivatives",
                 "--age-months": 1,
-                "--participant-label":"470437"
+                "--participant-label":"470437",
+                "--surface-recon-method": "mcribs",
+                "--output-spaces": "MNI152NLin6Asym:res-2"
             }
         },
         {
@@ -106,6 +107,22 @@
                 {
                     "host_path":"/home/faird/shared/code/external/pipelines/xcp_d_test_binds/20230712_fix-collection/xcp_d/xcp_d",
                     "container_path":"/usr/local/miniconda/lib/python3.8/site-packages/xcp_d"
+                },
+                {
+                    "host_path":"/home/faird/shared/code/external/pipelines/xcp_d_test_binds/PR924/xcp_d/xcp_d/tests/test_utils_bids.py",
+                    "container_path":"/usr/local/miniconda/lib/python3.8/site-packages/xcp_d/tests/test_utils_bids.py"
+                },
+                {
+                    "host_path":"/home/faird/shared/code/external/pipelines/xcp_d_test_binds/PR924/xcp_d/xcp_d/utils/bids.py",
+                    "container_path":"/usr/local/miniconda/lib/python3.8/site-packages/xcp_d/utils/bids.py"
+                },
+                {
+                    "host_path":"/home/faird/shared/code/external/pipelines/nibabies_test_binds/atlases/dHCP/dHCP.week42.L.sphere.surf.gii",
+                    "container_path":"${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-L_den-32k_sphere.surf.gii:ro"
+                },
+                {
+                    "host_path": "/home/faird/shared/code/external/pipelines/nibabies_test_binds/atlases/dHCP/dHCP.week42.R.sphere.surf.gii",
+                    "container_path":"${HOME}/.cache/templateflow/tpl-fsLR/tpl-fsLR_hemi-R_den-32k_sphere.surf.gii:ro"
                 }
             ],
             "positional_args": [
