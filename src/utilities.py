@@ -148,6 +148,7 @@ def run_stage(stage, j_args, logger):
         action = stage['action']
         stage_name = stage['name']
         positional_stage_args = stage['positional_args']
+        out_file = os.path.join(j_args['cabinet']['log_dir'], f"{stage_name}.log")
 
         cmd = ["singularity", action, *binds, *singularity_args, container_path, *positional_stage_args, *flag_stage_args]
 
@@ -155,7 +156,8 @@ def run_stage(stage, j_args, logger):
             logger.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
 
         try:
-            subprocess.check_call(cmd)
+            with open(out_file, "w+") as f:
+                subprocess.check_call(cmd, stdout=f)
             return True
 
         except Exception:
