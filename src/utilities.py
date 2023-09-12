@@ -148,7 +148,6 @@ def run_stage(stage, j_args, logger):
         action = stage['action']
         stage_name = stage['name']
         positional_stage_args = stage['positional_args']
-        out_file = os.path.join(j_args['cabinet']['log_dir'], f"{stage_name}.log")
 
         cmd = ["singularity", action, *binds, *singularity_args, container_path, *positional_stage_args, *flag_stage_args]
 
@@ -156,8 +155,12 @@ def run_stage(stage, j_args, logger):
             logger.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
 
         try:
-            with open(out_file, "w+") as f:
-                subprocess.check_call(cmd, stdout=f)
+            if j_args['cabinet']['log_directory'] != "":
+                out_file = os.path.join(j_args['cabinet']['log_directory'], f"{stage_name}.log")
+                with open(out_file, "w+") as f:
+                    subprocess.check_call(cmd, stdout=f)
+            else:
+                subprocess.check_call(cmd)
             return True
 
         except Exception:
@@ -234,6 +237,11 @@ def validate_parameter_json(j_args, json_path, logger):
                 is_valid = False
         else:
             j_args['cabinet']['handle_missing_host_paths'] = "allow"
+        # validate log directory
+        if "log_directory" not in j_args['cabinet']:
+            j_args['cabinet']['log_directory'] = ""
+        else:
+            os.makedirs(j_args['cabinet']['log_directory'], exist_ok=True)
         # validate container_type
         if "container_type" not in j_args['cabinet']:
             logger.error("Missing key in parameter JSON: cabinet container_type")

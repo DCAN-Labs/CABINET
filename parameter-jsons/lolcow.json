@@ -2,7 +2,7 @@
     "cabinet": {
         "container_type": "singularity",
         "verbose": true,
-        "log_dir": "/home/faird/tikal004/CBAW/logs"
+        "log_directory": "/home/faird/tikal004/CBAW/logs"
     },
 
     "stages": [
