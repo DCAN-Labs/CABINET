@@ -5,9 +5,8 @@
         "handle_missing_host_paths": "make_directories"
     },
 
-    "stages": [
-        {
-            "name":"bibsnet",
+    "stages": {
+        "bibsnet": {
             "sif_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
             "singularity_args": {
                 "--cleanenv": true,
@@ -38,7 +37,7 @@
                 "-w":"/work"
             }
         },
-        {  
+        "nibabies": {  
             "sif_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08102023.sif",
             "singularity_args": {
                 "--cleanenv": true
@@ -86,8 +85,7 @@
                 "--participant-label":"470437"
             }
         },
-        {
-            "name": "xcpd",
+        "xcpd": {
             "singularity_args": {
                 "--cleanenv": true
             },
@@ -127,13 +125,12 @@
                 "--participant-label": "470437" 
             }
         },
-        {
-            "name": "lolcow",
+        "lolcow": {
             "sif_filepath": "/home/faird/tikal004/lolcow.sif",
             "action": "exe",
             "positional_args": [
                 "cowsay", "\"Thank you for testing CABINET\""
             ]
         }
-    ]
+    }
 }

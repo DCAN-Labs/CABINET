@@ -121,32 +121,32 @@ def run_all_stages(j_args, logger):
     """
     # ...run all stages that the user said to run
     success = True
-    for stage in j_args['stages']:
+    for stage in j_args['cabinet']['stages']:
         stage_start = datetime.now()
         if j_args["cabinet"]["verbose"]:
             logger.info("Now running stage: {}\n"
-                        .format(stage['name']))
+                        .format(stage))
         stage_success = run_stage(stage, j_args, logger)
-        log_stage_finished(stage['name'], stage_start, logger, stage_success)
+        log_stage_finished(stage, stage_start, logger, stage_success)
         success = success and stage_success
     
     return success
 
 
-def run_stage(stage, j_args, logger):
+def run_stage(stage_name, j_args, logger):
     '''
     Gathers arguments form parameter file, constructs container run command and runs it.
     :param stage: String, name of the stage to run
     :param j_args: Dictionary, copy of j_args
     :param logger: logging.Logger object to show messages and raise warnings
     '''
+    stage = j_args['stages'][stage_name]
     if j_args['cabinet']['container_type'] == 'singularity':
         binds = get_binds(stage)
         singularity_args = get_optional_args_in(stage['singularity_args'])
         container_path = stage['sif_filepath']
         flag_stage_args = get_optional_args_in(stage['flags'])
         action = stage['action']
-        stage_name = stage['name']
         positional_stage_args = stage['positional_args']
 
         cmd = ["singularity", action, *binds, *singularity_args, container_path, *positional_stage_args, *flag_stage_args]
@@ -220,7 +220,7 @@ def validate_parameter_json(j_args, json_path, logger):
                 is_valid = False
         else:
             j_args['cabinet']['verbose'] = False
-        #set handle_missing_host_paths
+        # set handle_missing_host_paths
         if "handle_missing_host_paths" in j_args["cabinet"].keys():
             options = [ # for any given bind, if the host path doesnt exist...
                 'allow', # do nothing
@@ -232,6 +232,18 @@ def validate_parameter_json(j_args, json_path, logger):
                 is_valid = False
         else:
             j_args['cabinet']['handle_missing_host_paths'] = "allow"
+        # validate list of stages to run
+        if "stages" not in j_args["cabinet"].keys():
+            logger.error("Missing stage list. Please specify the stages to run by adding a list of stage names.")
+            is_valid = False
+        elif not isinstance(j_args["cabinet"]["stages"], list):
+            logger.error("Stages must be in list format. Please specify the stages to run by adding a list of stage names.")
+            is_valid = False
+        else:
+            for requested_stage in j_args["cabinet"]["stages"]:
+                if requested_stage not in j_args["stages"].keys():
+                    logger.error(f"Parameters for {requested_stage} not found. Please add parameters for {requested_stage} to 'stages'.")
+                    is_valid = False
         # validate container_type
         if "container_type" not in j_args['cabinet']:
             logger.error("Missing key in parameter JSON: cabinet container_type")
@@ -248,16 +260,13 @@ def validate_parameter_json(j_args, json_path, logger):
                         logger.error("Missing key in parameter JSON: 'stages'")
                         is_valid = False
                     else:
-                        for stage_index, stage in enumerate(j_args['stages']):
-                            stage_name = "Unnamed Stage"
-                            if "name" not in stage.keys():
-                                logger.error("Unnamed stage found. Please provide a name for all stages.")
-                                is_valid = False
-                            else:
-                                stage_name = stage['name']
+                        for stage_name, stage in j_args['stages'].items():
                             if "sif_filepath" not in stage.keys():
                                 logger.error(f"Missing key 'sif_filepath' in stage {stage_name}")
-                                is_valid = False                            
+                                is_valid = False
+                            elif not os.path.isfile(stage["sif_filepath"]):
+                                logger.error(f"{stage['sif_filepath']} is not a valid file path.")
+                                is_valid = False
                             optional_args = { "singularity_args": {}, "binds": [], "positional_args": [], "flags": {}, "action": "run" }
                             for arg, default in optional_args.items():
                                 if arg not in stage.keys():
@@ -276,7 +285,7 @@ def validate_parameter_json(j_args, json_path, logger):
                                         os.makedirs(binds["host_path"])
                                         logger.info(f"Made directory {binds['host_path']}")
 
-                            j_args['stages'][stage_index] = stage
+                            j_args['stages'][stage_name] = stage
 
     if not is_valid:
         logger.error(f"Parameter JSON {json_path} is invalid. See https://cabinet.readthedocs.io/ for examples.")
@@ -285,26 +294,3 @@ def validate_parameter_json(j_args, json_path, logger):
         logger.info(f"Parameter JSON {json_path} is valid.\nValidated JSON: {j_args}")
 
     return j_args
-
-def validate_path(path, type, logger):
-    """
-    :param path: String, filepath
-    :param type: String, 'file' or 'directory'
-    :param logger: cabinet's logger object
-    :return is_valid: bool, whether the path has passed validation
-    """
-    is_valid = True
-    if type == "directory":
-        if not os.is_dir(path):
-            try:
-                os.makedirs(path)
-                logger.info(f"Created output directory: {path}")
-            except:
-                logger.error(f"Error creating non-existant directory: {path}")
-                is_valid = False
-    else:
-        if not os.is_file(path):
-            logger.error(f"File does not exist: {path}")
-            is_valid = False
-
-    return is_valid

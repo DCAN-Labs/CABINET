@@ -1,13 +1,13 @@
 {
     "cabinet": {
         "container_type": "singularity",
+        "stages": ["bibsnet", "nibabies", "xcpd", "lolcow"],
         "verbose": true,
         "handle_missing_host_paths": "make_directories"
     },
 
-    "stages": [
-        {
-            "name":"bibsnet",
+    "stages": {
+        "bibsnet": {
             "sif_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
             "singularity_args": {
                 "--cleanenv": true,
@@ -39,8 +39,7 @@
                 "-w":"/work"
             }
         },
-        {  
-            "name":"nibabies",
+        "nibabies": {  
             "sif_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08282023a.sif",
             "singularity_args": {
                 "--cleanenv": true
@@ -85,8 +84,7 @@
                 "--output-spaces": "MNI152NLin6Asym:res-2"
             }
         },
-        {
-            "name": "xcpd",
+        "xcpd": {
             "sif_filepath": "/home/faird/shared/code/external/pipelines/xcp_d/xcp_d_unstable_07172023a.sif",
             "singularity_args": {
                 "--cleanenv": true
@@ -143,13 +141,12 @@
                 "--participant-label": "470437" 
             }
         },
-        {
-            "name": "lolcow",
-            "sif_filepath": "/home/faird/tikal004/lolcow.sif",
+        "lolcow": {
+            "sif_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
             "action": "exec",
             "positional_args": [
                 "cowsay", "\"Thank you for testing CABINET\""
             ]
         }
-    ]
+    }
 }
