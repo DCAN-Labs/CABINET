@@ -1,6 +1,7 @@
 {
     "cabinet": {
         "container_type": "singularity",
+        "stages": ["bibsnet", "solve_world_hunger", "nibabies"],
         "verbose": true,
         "handle_missing_host_paths": "make_directories"
     },
