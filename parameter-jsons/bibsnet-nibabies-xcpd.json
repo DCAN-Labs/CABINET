@@ -3,7 +3,8 @@
         "container_type": "singularity",
         "stages": ["bibsnet", "nibabies", "xcpd", "lolcow"],
         "verbose": true,
-        "handle_missing_host_paths": "make_directories"
+        "handle_missing_host_paths": "make_directories",
+        "log_directory": "/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/logs/"
     },
 
     "stages": {
