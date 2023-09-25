@@ -156,15 +156,16 @@ def run_stage(stage_name, j_args, logger):
 
         try:
             if j_args['cabinet']['log_directory'] != "":
-                out_file = os.path.join(j_args['cabinet']['log_directory'], f"{stage_name}.log")
+                job_id = j_args['cabinet']['job_id']
+                out_file = os.path.join(j_args['cabinet']['log_directory'], f"{job_id}_{stage_name}.log")
                 with open(out_file, "w+") as f:
-                    subprocess.check_call(cmd, stdout=f)
+                    subprocess.check_call(cmd, stdout=f, stderr=f)
             else:
                 subprocess.check_call(cmd)
             return True
 
         except Exception:
-            logger.exception(f"Error running {stage_name}")
+            logger.error(f"Error running {stage_name}")
             return False
 
 
@@ -254,6 +255,8 @@ def validate_parameter_json(j_args, json_path, logger):
             j_args['cabinet']['log_directory'] = ""
         else:
             os.makedirs(j_args['cabinet']['log_directory'], exist_ok=True)
+            if "job_id" not in j_args['cabinet']:
+                j_args['cabinet']['job_id'] = datetime.now().timestamp()
         # validate container_type
         if "container_type" not in j_args['cabinet']:
             logger.error("Missing key in parameter JSON: cabinet container_type")
