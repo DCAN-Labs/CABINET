@@ -24,7 +24,9 @@ To use CBAW, users will need to create a parameters json that contains the infor
 
 * allow will not do anything about the missing directories.
 
-`log_directory`: Optional; a valid filepath. If included stdout will be routed to `.log` files that will be stored in this directory, one log file for each stage. If left blank stdout will behave normally.
+`log_directory`: Optional; a valid filepath. If included stdout will be routed to `.log` files that will be stored in this directory, one log file for each stage. Overwrites any existing files with the same name. If left blank stdout will behave normally.
+
+`job_id`: Optional; string to prepend to log file name. Only used if `log_directory` is specified. Defaults to the timestamp at the time of j_arg validation.
 
 ### stages variables 
 
