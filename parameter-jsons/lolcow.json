@@ -8,14 +8,14 @@
 
     "stages": {
         "lolcow": {
-            "sif_filepath": "/home/faird/tikal004/sif-files/lolcow.sif"
+            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif"
         },
         "dockerfail": {
-            "sif_filepath": "/home/faird/tikal004/sif-files/dockerfail.sif"
+            "container_filepath": "/home/faird/tikal004/sif-files/dockerfail.sif"
         },
         "lolcow-exec": {
             "action": "exec",
-            "sif_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
+            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
             "positional_args": [
                 "cowsay", "\"Thank you for testing CABINET\""
             ]

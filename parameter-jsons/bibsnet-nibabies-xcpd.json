@@ -9,7 +9,7 @@
 
     "stages": {
         "bibsnet": {
-            "sif_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
+            "container_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
             "singularity_args": {
                 "--cleanenv": true,
                 "--nv": true
@@ -41,7 +41,7 @@
             }
         },
         "nibabies": {  
-            "sif_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08282023a.sif",
+            "container_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08282023a.sif",
             "singularity_args": {
                 "--cleanenv": true
             },
@@ -86,7 +86,7 @@
             }
         },
         "xcpd": {
-            "sif_filepath": "/home/faird/shared/code/external/pipelines/xcp_d/xcp_d_unstable_07172023a.sif",
+            "container_filepath": "/home/faird/shared/code/external/pipelines/xcp_d/xcp_d_unstable_07172023a.sif",
             "singularity_args": {
                 "--cleanenv": true
             },
@@ -143,7 +143,7 @@
             }
         },
         "lolcow": {
-            "sif_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
+            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
             "action": "exec",
             "positional_args": [
                 "cowsay", "\"Thank you for testing CABINET\""

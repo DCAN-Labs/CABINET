@@ -144,7 +144,7 @@ def run_stage(stage_name, j_args, logger):
     if j_args['cabinet']['container_type'] == 'singularity':
         binds = get_binds(stage)
         singularity_args = get_optional_args_in(stage['singularity_args'])
-        container_path = stage['sif_filepath']
+        container_path = stage['container_filepath']
         flag_stage_args = get_optional_args_in(stage['flags'])
         action = stage['action']
         positional_stage_args = stage['positional_args']
@@ -271,11 +271,11 @@ def validate_parameter_json(j_args, json_path, logger):
                         is_valid = False
                     else:
                         for stage_name, stage in j_args['stages'].items():
-                            if "sif_filepath" not in stage.keys():
-                                logger.error(f"Missing key 'sif_filepath' in stage {stage_name}")
+                            if "container_filepath" not in stage.keys():
+                                logger.error(f"Missing key 'container_filepath' in stage {stage_name}")
                                 is_valid = False
-                            elif not os.path.isfile(stage["sif_filepath"]):
-                                logger.error(f"{stage['sif_filepath']} is not a valid file path.")
+                            elif not os.path.isfile(stage["container_filepath"]):
+                                logger.error(f"{stage['container_filepath']} is not a valid file path.")
                                 is_valid = False
                             optional_args = { "singularity_args": {}, "binds": [], "positional_args": [], "flags": {}, "action": "run" }
                             for arg, default in optional_args.items():
