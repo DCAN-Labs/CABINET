@@ -53,7 +53,7 @@ def get_args():
 
 def get_binds(stage_args):
     '''
-    :param to_bind: List of dicts, list of dicts with 'host_path' and 'container_path'
+    :param stage_args: dict, stage run commands dictionary
     :return binds: list of formatted binds for use in subprocess.check_call
     '''
     binds = []
@@ -64,6 +64,21 @@ def get_binds(stage_args):
         binds.append(f"{bind['host_path']}:{bind['container_path']}")
         
     return binds
+
+def get_mounts(stage_args):
+    '''
+    :param stage_args: dict, stage run commands dictionary
+    :return mounts: list of formatted mounts for use in subprocess.check_call
+    '''
+    mounts = []
+    to_mount = stage_args['mounts']
+
+    for mount in to_mount:
+        mounts.append("--mount")
+        cmd = f"type=bind,src={mount['host_path']},dst={mount['container_path']}"
+        mounts.append(cmd)
+
+    return mounts
 
 def get_optional_args_in(a_dict):
     """
@@ -141,33 +156,40 @@ def run_stage(stage_name, j_args, logger):
     :param logger: logging.Logger object to show messages and raise warnings
     '''
     stage = j_args['stages'][stage_name]
+    action = stage['action']
+    flag_stage_args = get_optional_args_in(stage['flags'])
+    positional_stage_args = stage['positional_args']
+
     if j_args['cabinet']['container_type'] == 'singularity':
         binds = get_binds(stage)
         singularity_args = get_optional_args_in(stage['singularity_args'])
         container_path = stage['container_filepath']
-        flag_stage_args = get_optional_args_in(stage['flags'])
-        action = stage['action']
-        positional_stage_args = stage['positional_args']
 
         cmd = ["singularity", action, *binds, *singularity_args, container_path, *positional_stage_args, *flag_stage_args]
 
-        if j_args["cabinet"]["verbose"]:
-            logger.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
+    elif j_args['cabinet']['container_type'] == 'docker':
+        image_name = stage['image_name']
+        mounts = get_mounts(stage)
+        docker_args = get_optional_args_in(stage['docker_args'])
 
-        try:
-            if j_args['cabinet']['log_directory'] != "":
-                job_id = j_args['cabinet']['job_id']
-                out_file = os.path.join(j_args['cabinet']['log_directory'], f"{job_id}_{stage_name}.log")
-                with open(out_file, "w+") as f:
-                    subprocess.check_call(cmd, stdout=f, stderr=f)
-            else:
-                subprocess.check_call(cmd)
-            return True
+        cmd = ["docker", action, *mounts, *docker_args, image_name, *positional_stage_args, *flag_stage_args]
 
-        except Exception:
-            logger.error(f"Error running {stage_name}")
-            return False
+    if j_args["cabinet"]["verbose"]:
+        logger.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
 
+    try:
+        if j_args['cabinet']['log_directory'] != "":
+            job_id = j_args['cabinet']['job_id']
+            out_file = os.path.join(j_args['cabinet']['log_directory'], f"{job_id}_{stage_name}.log")
+            with open(out_file, "w+") as f:
+                subprocess.check_call(cmd, stdout=f, stderr=f)
+        else:
+            subprocess.check_call(cmd)
+        return True
+
+    except Exception:
+        logger.error(f"Error running {stage_name}")
+        return False
 
 def valid_readable_file(path):
     """
@@ -262,7 +284,7 @@ def validate_parameter_json(j_args, json_path, logger):
             logger.error("Missing key in parameter JSON: cabinet container_type")
             is_valid = False
         else:
-            container_types = ["singularity"]
+            container_types = ["singularity", "docker"]
             if j_args['cabinet']['container_type'] not in container_types:
                 logger.error(f"Invalid container type in parameter JSON.\ncabinet container_type must be in {container_types}")
                 is_valid = False
@@ -298,8 +320,9 @@ def validate_parameter_json(j_args, json_path, logger):
                                         os.makedirs(binds["host_path"])
                                         logger.info(f"Made directory {binds['host_path']}")
 
-                            j_args['stages'][stage_name] = stage
-
+                        j_args['stages'][stage_name] = stage
+                elif j_args['cabinet']['container_type'] == "docker":
+                    pass
     if not is_valid:
         logger.error(f"Parameter JSON {json_path} is invalid. See https://cabinet.readthedocs.io/ for examples.")
         sys.exit()
