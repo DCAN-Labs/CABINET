@@ -143,6 +143,8 @@ def run_all_stages(j_args, logger):
                         .format(stage))
         stage_success = run_stage(stage, j_args, logger)
         log_stage_finished(stage, stage_start, logger, stage_success)
+        if j_args['cabinet']['stop_on_stage_fail'] and not stage_success:
+            return False
         success = success and stage_success
     
     return success
@@ -317,6 +319,11 @@ def validate_cabinet_options(j_args, logger):
             "default": "stop",
             "values": ["stop", "allow", "make_directories"],
             "type": str
+        },
+        "stop_on_stage_fail": {
+            "required": False,
+            "default": True,
+            "type": bool
         }
     }
 

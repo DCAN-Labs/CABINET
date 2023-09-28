@@ -28,6 +28,8 @@ To use CBAW, users will need to create a parameters json that contains the infor
 
 `job_id`: Optional; string to prepend to log file name. Only used if `log_directory` is specified. Defaults to the timestamp at the time of JSON validation.
 
+`stop_on_stage_fail`: Optional; boolean. Whether to stop when one stage fails (true) or continue executing other stages (false). Defaults to true.
+
 ### stages variables 
 
 `action`: Optional; value of `exec` or `run`; defaults to `run`

@@ -1,8 +1,9 @@
 {
     "cabinet": {
         "container_type": "docker",
-        "stages": ["dockertest", "dockerfail"],
-        "verbose": true
+        "stages": ["dockertest", "dockerfail", "dockertest"],
+        "verbose": true,
+        "stop_on_stage_fail": false
     },
 
     "stages": {
