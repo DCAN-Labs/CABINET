@@ -16,7 +16,7 @@ To use CBAW, users will need to create a parameters json that contains the infor
 
 `verbose`: Optional; value of true or false; if not specified, defaults to false.
 
-`handle_missing_host_paths`: Optional; how you want the container to behave if any given paths don't exist; value of `stop`, `make_directories`, or `allow`; defaults to allow.
+`handle_missing_host_paths`: Optional; how you want the container to behave if any given paths don't exist; value of `stop`, `make_directories`, or `allow`; defaults to `stop`.
 
 * stop will cause the json to be invalidated if paths don't exist.
 
