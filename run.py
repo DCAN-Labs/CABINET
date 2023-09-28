@@ -8,23 +8,22 @@ from datetime import datetime
 from src.utilities import (
     exit_with_time_info,
     get_args,
-    make_logger,
-    run_all_stages,
-    validate_parameter_json
+    run_all_stages
 )
 
+from src.logger import LOGGER
+from src.validate import validate_parameter_json
 
 def main():
     start_time = datetime.now()  # Time how long the script takes
-    logger = make_logger()  # Make object to log error/warning/status messages
 
     # Get and validate command-line arguments and parameters from .JSON file
     args = get_args() 
-    json_args = validate_parameter_json(args.parameter_json, logger)
-    logger.info(f"Identified stages to be run: {json_args['cabinet']['stages']}")
+    json_args = validate_parameter_json(args.parameter_json)
+    LOGGER.info(f"Identified stages to be run: {json_args['cabinet']['stages']}")
     
     # Run every stage that the parameter file says to run
-    success = run_all_stages(json_args, logger)
+    success = run_all_stages(json_args)
     # TODO default to running all stages if not specified by the user
 
     # Show user how long the pipeline took and end the pipeline here

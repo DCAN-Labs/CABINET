@@ -12,7 +12,8 @@ import json
 import os
 import subprocess
 import sys
-import logging
+
+from src.logger import LOGGER
 
 # NOTE All functions below are in alphabetical order.
 
@@ -97,62 +98,46 @@ def get_optional_args_in(a_dict):
                 optional_args.append(str(a_dict[arg]))
     return optional_args
 
-def log_stage_finished(stage_name, event_time, logger, success):
+def log_stage_finished(stage_name, event_time, success):
     """
     Print and return a string showing how much time has passed since the
     current running script reached a certain part of its process
     :param stage_name: String, name of event that just finished
     :param event_time: datetime object representing when {stage_name} started
-    :param sub_ses: List with either only the subject ID str or the session too
+    :param success: bool, whether the stage was successful
     :return: String with an easily human-readable message showing how much time
              has passed since {stage_start} when {stage_name} started.
     """
     successful = 'finished' if success else 'failed'
-    logger.info("{0} {2}. "
+    LOGGER.info("{0} {2}. "
                 "Time elapsed since {0} started: {1}"
                 .format(stage_name, datetime.now() - event_time, successful))
-    
-def make_logger():
-    """
-    Make logger to log status updates, warnings, and other important info
-    :return: logging.Logger able to print info to stdout and problems to stderr
-    """  # TODO Incorporate pprint to make printed JSONs/dicts more readable
-    fmt = "\n%(levelname)s %(asctime)s: %(message)s"
-    logging.basicConfig(stream=sys.stdout, format=fmt, level=logging.INFO)  
-    logging.basicConfig(stream=sys.stderr, format=fmt, level=logging.ERROR)
-    logging.basicConfig(stream=sys.stderr, format=fmt, level=logging.WARNING)
-    return logging.getLogger(os.path.basename(sys.argv[0]))
 
-def run_all_stages(j_args, logger):
+def run_all_stages(j_args):
     """
-    Run stages sequentially, starting and ending at stages specified by user
-    :param all_stages: List of functions in order where each runs one stage
-    :param sub_ses_IDs: List of dicts mapping "age_months", "subject",
-                        "session", etc. to unique values per subject session
-    :param ubiquitous_j_args: Dictionary of all args needed by each stage
-    :param logger: logging.Logger object to show messages and raise warnings
+    Run stages sequentially as specified by user
+    :param j_args: Dictionary of all args needed by each stage
     """
     # ...run all stages that the user said to run
     success = True
     for stage in j_args['cabinet']['stages']:
         stage_start = datetime.now()
         if j_args["cabinet"]["verbose"]:
-            logger.info("Now running stage: {}\n"
+            LOGGER.info("Now running stage: {}\n"
                         .format(stage))
-        stage_success = run_stage(stage, j_args, logger)
-        log_stage_finished(stage, stage_start, logger, stage_success)
+        stage_success = run_stage(stage, j_args)
+        log_stage_finished(stage, stage_start, stage_success)
         if j_args['cabinet']['stop_on_stage_fail'] and not stage_success:
             return False
         success = success and stage_success
     
     return success
 
-def run_stage(stage_name, j_args, logger):
+def run_stage(stage_name, j_args):
     '''
     Gathers arguments form parameter file, constructs container run command and runs it.
     :param stage: String, name of the stage to run
     :param j_args: Dictionary, copy of j_args
-    :param logger: logging.Logger object to show messages and raise warnings
     '''
     stage = j_args['stages'][stage_name]
     action = stage['action']
@@ -173,7 +158,7 @@ def run_stage(stage_name, j_args, logger):
         cmd = ["docker", action, *mounts, *container_args, image_name, *positional_stage_args, *flag_stage_args]
 
     if j_args["cabinet"]["verbose"]:
-        logger.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
+        LOGGER.info(f"run command for {stage_name}:\n{' '.join(cmd)}\n")
 
     try:
         if j_args['cabinet']['log_directory'] != "":
@@ -186,7 +171,7 @@ def run_stage(stage_name, j_args, logger):
         return True
 
     except Exception:
-        logger.error(f"Error running {stage_name}")
+        LOGGER.error(f"Error running {stage_name}")
         return False
 
 def valid_readable_json(path):
@@ -201,242 +186,3 @@ def valid_readable_json(path):
     except (OSError, TypeError, AssertionError, ValueError,
             argparse.ArgumentTypeError):
         raise argparse.ArgumentTypeError(f"{path} is not a path to a readable .json file")
-
-def validate_parameter_json(json_path, logger):
-    """
-    Validates the parameter JSON to ensure CABINET can run.
-    :param j_args: dict, the parsed parameter JSON
-    :param json_path: str, filepath of the parameter JSON
-    :param logger: logging.Logger object to show messages and raise warnings
-    :return: j_args, the parameter j_args dict with empty keys set to defaults
-    """
-
-    logger.info(f"Getting Arguments from arg file: {json_path}")
-    
-    j_args = extract_from_json(json_path)
-
-    logger.info("Validating parameter JSON\n")
-
-    is_valid = True
-
-    # validate cabinet key
-    if "cabinet" not in j_args.keys():
-        logger.error("Missing key in parameter JSON: 'cabinet'")
-        is_valid = False
-    else:
-        j_args, is_valid = validate_cabinet_options(j_args, logger)
-
-    # if cabinet key is valid, validate stages key
-    if is_valid:
-        if "stages" not in j_args.keys():
-            logger.error("Missing key in parameter JSON: 'stages'")
-            is_valid = False
-        else:
-            for requested_stage in j_args["cabinet"]["stages"]:
-                if requested_stage not in j_args["stages"].keys():
-                    logger.error(f"Parameters for {requested_stage} not found. Please add parameters for {requested_stage} to 'stages'.")
-                    is_valid = False
-                else:
-                    j_args, is_valid = validate_stage(j_args, logger, requested_stage)
-
-    # if stages key is valid, validate binds/mounts
-    if is_valid:
-        bind_type = "binds"
-        if j_args['cabinet']['container_type'] == "docker":
-            bind_type = "mounts"
-        for stage in j_args['cabinet']['stages']:
-            is_valid = is_valid and validate_binds(stage, j_args, bind_type, logger)
-
-    if not is_valid:
-        logger.error(f"Parameter JSON {json_path} is invalid. See examples directory for examples.")
-        sys.exit()
-    elif j_args['cabinet']['verbose']:
-        logger.info(f"Parameter JSON {json_path} is valid.\nValidated JSON: {j_args}")
-
-    return j_args
-
-def validate_cabinet_options(j_args, logger):
-    """
-    Validates the cabinet options from the param json.
-    :param j_args: dict, the parsed json.
-    :param logger: logging.Logger object to show messages and raise warnings
-    :returns j_args: dict, the parsed json with any missing arguments set to default values
-    :returns is_valid: bool, if the json is valid
-    """
-    is_valid = True
-    options = {
-        "container_type": {
-            "required": True,
-            "values": ["singularity", "docker"],
-            "type": str
-        },
-        "stages": {
-            "required": True,
-            "type": list
-        },
-        "verbose": {
-            "required": False,
-            "default": False,
-            "type": bool
-        },
-        "log_directory": {
-            "required": False,
-            "default": "",
-            "type": str
-        },
-        "job_id": {
-            "required": False,
-            "default": datetime.now().timestamp(),
-            "type": str
-        },
-        "handle_missing_host_paths": {
-            "required": False,
-            "default": "stop",
-            "values": ["stop", "allow", "make_directories"],
-            "type": str
-        },
-        "stop_on_stage_fail": {
-            "required": False,
-            "default": True,
-            "type": bool
-        }
-    }
-
-    for option, requirements in options.items():
-        # enforce required keys
-        if option not in j_args['cabinet'].keys():
-            if requirements['required']:
-                is_valid = False
-                logger.error(f"Missing required key in cabinet options: {option}")
-                continue
-            # set as default if not required and not supplied
-            else:
-                j_args['cabinet'][option] = requirements["default"]
-
-        # ensure types are correct and values are allowed
-        else:
-            arg = j_args['cabinet'][option]
-            if not isinstance(arg, requirements['type']):
-                is_valid = False
-                logger.error(f"Invalid cabinet option: {option}. Must be of type {requirements['type']}")
-            elif "values" in requirements:
-                if arg not in requirements['values']:
-                    is_valid = False
-                    logger.error(f"Invalid cabinet option: {option}. Must be in {requirements['values']}")
-
-    # create log directory if set and not exists
-    if j_args['cabinet']['log_directory'] != "":
-        os.makedirs(j_args['cabinet']['log_directory'], exist_ok=True)
-    
-    return j_args, is_valid
-
-def validate_stage(j_args, logger, stage):
-    """
-    Validates a stage's options from the param json.
-    :param j_args: dict, the parsed json.
-    :param logger: logging.Logger object to show messages and raise warnings
-    :returns j_args: dict, the parsed json with any missing arguments set to default values
-    :returns is_valid: bool, if the json is valid
-    """
-    is_valid = True
-    container_type = j_args['cabinet']['container_type']
-
-    options = {
-        "action": {
-            "required": False,
-            "type": str,
-            "values": ['run', 'exec'],
-            "default": 'run'
-        },
-        "positional_args": {
-            "required": False,
-            "type": list,
-            "default": []
-        },
-        "flags": {
-            "required": False,
-            "type": dict,
-            "default": {}
-        },
-        "container_args": {
-            "required": False,
-            "type": dict,
-            "default": {}
-        }
-    }
-
-    if container_type == "singularity":
-        options["container_filepath"] = {
-            "required": True,
-            "type": str
-        }
-        options["binds"] = {
-            "required": False,
-            "type": list,
-            "default": {}
-        }
-
-    elif container_type == "docker":
-        options["image_name"] = {
-            "required": True,
-            "type": str
-        }
-        options["mounts"] = {
-            "required": False,
-            "type": list,
-            "default": {}
-        }
-
-    for option, requirements in options.items():
-        # enforce required keys
-        if option not in j_args['stages'][stage].keys():
-            if requirements['required']:
-                is_valid = False
-                logger.error(f"Missing required key in stage options: {stage}, {option}.")
-                continue
-            # set as default if not required and not supplied
-            else:
-                j_args['stages'][stage][option] = requirements["default"]
-
-        # ensure types are correct and values are allowed
-        else:
-            arg = j_args['stages'][stage][option]
-            if not isinstance(arg, requirements['type']):
-                is_valid = False
-                logger.error(f"Invalid stage option: {stage}, {option}. Must be of type {requirements['type']}")
-            elif "values" in requirements:
-                if arg not in requirements['values']:
-                    is_valid = False
-                    logger.error(f"Invalid stage option: {stage}, {option}. Must be in {requirements['values']}")
-
-    if container_type == "singularity":
-        if not os.path.isfile(j_args['stages'][stage]['container_filepath']):
-            is_valid = False
-            logger.error(f"File does not exist at {j_args['stages'][stage]['container_filepath']}")
-    
-    return j_args, is_valid
-
-def validate_binds(stage, j_args, type, logger):
-    """
-    Validate binds or mounts for a specific stage.
-    :param stage: str, name of the stage to validate
-    :param j_args: dict, the parsed json.
-    :param type: str, 'binds' or 'mounts'
-    :param logger: logging.Logger object to show messages and raise warnings 
-    :return: is_valid, bool. whether the binds for this stage are valid
-    """
-    is_valid = True
-    
-    for binds in j_args['stages'][stage][type]:
-        if 'host_path' not in binds.keys() or 'container_path' not in binds.keys():
-            logger.error(f"Invalid bind in {stage}. 'host_path' and 'container_path' are required for all binds.")
-            is_valid = False
-        if not os.path.exists(binds['host_path']):
-            if j_args["cabinet"]["handle_missing_host_paths"] == 'stop':
-                logger.error(f"Host filepath in stage {stage} does not exist: {binds['host_path']}")
-                is_valid = False
-            elif j_args["cabinet"]["handle_missing_host_paths"] == 'make_directories':
-                os.makedirs(binds["host_path"])
-                logger.info(f"Made directory {binds['host_path']}")
-
-    return is_valid
