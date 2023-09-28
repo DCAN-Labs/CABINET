@@ -7,7 +7,6 @@ from datetime import datetime
 # Custom local imports
 from src.utilities import (
     exit_with_time_info,
-    extract_from_json,
     get_args,
     make_logger,
     run_all_stages,
@@ -20,11 +19,8 @@ def main():
     logger = make_logger()  # Make object to log error/warning/status messages
 
     # Get and validate command-line arguments and parameters from .JSON file
-    args = get_args()
-    json_path = args.parameter_json
-    logger.info(f"Getting Arguments from arg file: {json_path}")
-    json_args = extract_from_json(args.parameter_json)
-    json_args = validate_parameter_json(json_args, json_path, logger)
+    args = get_args() 
+    json_args = validate_parameter_json(args.parameter_json, logger)
     logger.info(f"Identified stages to be run: {json_args['cabinet']['stages']}")
     
     # Run every stage that the parameter file says to run

@@ -112,7 +112,6 @@ def log_stage_finished(stage_name, event_time, logger, success):
                 "Time elapsed since {0} started: {1}"
                 .format(stage_name, datetime.now() - event_time, successful))
     
-
 def make_logger():
     """
     Make logger to log status updates, warnings, and other important info
@@ -123,7 +122,6 @@ def make_logger():
     logging.basicConfig(stream=sys.stderr, format=fmt, level=logging.ERROR)
     logging.basicConfig(stream=sys.stderr, format=fmt, level=logging.WARNING)
     return logging.getLogger(os.path.basename(sys.argv[0]))
-
 
 def run_all_stages(j_args, logger):
     """
@@ -148,7 +146,6 @@ def run_all_stages(j_args, logger):
         success = success and stage_success
     
     return success
-
 
 def run_stage(stage_name, j_args, logger):
     '''
@@ -205,7 +202,7 @@ def valid_readable_json(path):
             argparse.ArgumentTypeError):
         raise argparse.ArgumentTypeError(f"{path} is not a path to a readable .json file")
 
-def validate_parameter_json(j_args, json_path, logger):
+def validate_parameter_json(json_path, logger):
     """
     Validates the parameter JSON to ensure CABINET can run.
     :param j_args: dict, the parsed parameter JSON
@@ -213,6 +210,11 @@ def validate_parameter_json(j_args, json_path, logger):
     :param logger: logging.Logger object to show messages and raise warnings
     :return: j_args, the parameter j_args dict with empty keys set to defaults
     """
+
+    logger.info(f"Getting Arguments from arg file: {json_path}")
+    
+    j_args = extract_from_json(json_path)
+
     logger.info("Validating parameter JSON\n")
 
     is_valid = True
