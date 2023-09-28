@@ -10,7 +10,7 @@ To use CBAW, users will need to create a parameters json that contains the infor
 
 ### cabinet variables
 
-`container_type`: Required; the type of containers you are running (`singularity` or `docker`). Right now we can only support singularity containers.
+`container_type`: Required; the type of containers you are running (`singularity` or `docker`).
 
 `stages`: Required; a list of stages to run in the order they should be run in.
 
@@ -26,21 +26,29 @@ To use CBAW, users will need to create a parameters json that contains the infor
 
 `log_directory`: Optional; a valid filepath. If included stdout will be routed to `.log` files that will be stored in this directory, one log file for each stage. Overwrites any existing files with the same name. If left blank stdout will behave normally.
 
-`job_id`: Optional; string to prepend to log file name. Only used if `log_directory` is specified. Defaults to the timestamp at the time of j_arg validation.
+`job_id`: Optional; string to prepend to log file name. Only used if `log_directory` is specified. Defaults to the timestamp at the time of JSON validation.
 
 ### stages variables 
 
-`container_filepath`: Required; path to sif file of container
-
 `action`: Optional; value of `exec` or `run`; defaults to `run`
 
-`singularity_args`: Optional; arguments for singularity run options 
-
-`binds`: Optional; any necessary binds for the containers; if specified, need both the `host_path` and `container_path`
+`container_args`: Optional; arguments for singularity or docker run options 
 
 `positional_args`: Optional; any necessary arguments for the container
 
 `flags`: Optional; any necessary flags to run the container
+
+#### Singularity stage variables
+
+`container_filepath`: Required; path to sif file of container
+
+`binds`: Optional; any necessary binds for the containers; if specified, need both the `host_path` and `container_path`
+
+#### Docker stage variables
+
+`image_name`: Required; name of the Docker image to run.
+
+`mounts`: Optional; any necessary mounts for the containers; if specified, need both the `host_path` and `container_path`
 
 All optional variables without an explicit default will appear in the validated JSON as an empty data structure (when using the verbose output).
 
@@ -59,7 +67,7 @@ Below is an example for how BIBSNet would be run.
                 "bibsnet": {
                     "container_filepath": "/path/to/container/bibsnet.sif",
                     "action": "run",
-                    "singularity_args": {
+                    "container_args": {
                         "--cleanenv": true,
                         "--nv": true
                     },
@@ -111,11 +119,11 @@ Below is an example output from running bibsnet and lolcow.
 
     INFO 2023-09-08 16:22:18,092: Parameter JSON /panfs/jay/groups/6/faird/tikal004/CBAW/parameter-jsons/bibsnet-nibabies-xcpd.json is valid.
     Validated JSON: {'cabinet': {'container_type': 'singularity', 'verbose': True, 'handle_missing_host_paths': 'make_directories'}, 
-    'stages': [{'name': 'bibsnet', 'container_filepath': '/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif', 'singularity_args': {'--cleanenv': True, '--nv': True}, 
+    'stages': [{'name': 'bibsnet', 'container_filepath': '/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif', 'container_args': {'--cleanenv': True, '--nv': True}, 
     'binds': [{'host_path': '/home/faird/shared/data/BCP-MVP_BIBSNet/input/', 'container_path': '/input'}, {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/', 'container_path': '/output'}, 
     {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/', 'container_path': '/work'}], 'positional_args': ['/input', '/output', 'participant'], 
     'flags': {'--parameter-json': '/home/cabinet/parameter-file-container.json', '-start': 'prebibsnet', '-end': 'postbibsnet', '-v': True, '--participant-label': '123456', '-w': '/work'}, 'action': 'run'}, 
-    {'name': 'lolcow', 'container_filepath': '/home/faird/tikal004/lolcow.sif', 'action': 'exec', 'positional_args': ['cowsay', '"Thank you for testing CABINET"'], 'singularity_args': {}, 'binds': [], 'flags': {}}]}
+    {'name': 'lolcow', 'container_filepath': '/home/faird/tikal004/lolcow.sif', 'action': 'exec', 'positional_args': ['cowsay', '"Thank you for testing CABINET"'], 'container_args': {}, 'binds': [], 'flags': {}}]}
 
     INFO 2023-09-08 16:22:18,092: Identified stages to be run: ['bibsnet', 'nibabies', 'xcpd', 'lolcow']
 

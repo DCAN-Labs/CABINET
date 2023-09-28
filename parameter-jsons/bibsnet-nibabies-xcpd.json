@@ -10,7 +10,7 @@
     "stages": {
         "bibsnet": {
             "container_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
-            "singularity_args": {
+            "container_args": {
                 "--cleanenv": true,
                 "--nv": true
             },
@@ -42,7 +42,7 @@
         },
         "nibabies": {  
             "container_filepath": "/home/faird/shared/code/external/pipelines/nibabies/nibabies_t1-t2-derivatives_08282023a.sif",
-            "singularity_args": {
+            "container_args": {
                 "--cleanenv": true
             },
             "binds": [
@@ -87,7 +87,7 @@
         },
         "xcpd": {
             "container_filepath": "/home/faird/shared/code/external/pipelines/xcp_d/xcp_d_unstable_07172023a.sif",
-            "singularity_args": {
+            "container_args": {
                 "--cleanenv": true
             },
             "binds": [
