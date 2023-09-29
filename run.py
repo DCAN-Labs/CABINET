@@ -24,7 +24,6 @@ def main():
     
     # Run every stage that the parameter file says to run
     success = run_all_stages(json_args)
-    # TODO default to running all stages if not specified by the user
 
     # Show user how long the pipeline took and end the pipeline here
     exit_with_time_info(start_time, success)
