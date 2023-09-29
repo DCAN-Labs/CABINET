@@ -7,7 +7,7 @@ The parameter-jsons folder contains examples of parameter jsons that string toge
 ## Arguments
 
 ### Required positional arguments
-`parmeter-json`: A filepath to the parmeter JSON to run. See **Setting up the parameters.json** section for more information.
+`parameter-json`: A filepath to the parmeter JSON to run. See **Setting up the parameters.json** section for more information.
 
 ### Optional flag arguments
 `--dryrun`: If included `run.py` will validate the parameter json file without running any containers.

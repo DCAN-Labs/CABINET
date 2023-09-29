@@ -8,9 +8,9 @@ from src.valid_jargs_class import ValidJargs
 
 class Wrapper():
 
-    def __init__(self, valid_jargs: ValidJargs) -> None:
+    def __init__(self, Jargs: ValidJargs) -> None:
         self.start_time = datetime.now()
-        self.j_args = valid_jargs.j_args
+        self.j_args = Jargs.j_args
 
     def run_wrapper(self) -> None:
         LOGGER.info(f"Identified stages to be run: {self.j_args['cabinet']['stages']}")
