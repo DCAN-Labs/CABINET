@@ -4,9 +4,17 @@ CBAW is a way to bind multiple containers together and run them with a single co
 
 The parameter-jsons folder contains examples of parameter jsons that string together multiple containers. If you use CBAW for any containers that aren't in the parameter-jsons folder, please add your json as a resource for others to use.
 
+## Arguments
+
+### Required positional arguments
+`parmeter-json`: A filepath to the parmeter JSON to run. See **Setting up the parameters.json** section for more information.
+
+### Optional flag arguments
+`--dryrun`: If included `run.py` will validate the parameter json file without running any containers.
+
 ## Setting up the parameters.json
 
-To use CBAW, users will need to create a parameters json that contains the information about which containers will be run. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet`, which contains options for how CBAW will run and `stages` which contains options for how each container in CBAW will run. If you would like to make sure your json is valid before trying to run all of the containers, run `validate-param-json.py` with your json as the input. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
+To use CBAW, users will need to create a parameters json that contains the information about which containers will be run. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet`, which contains options for how CBAW will run and `stages` which contains options for how each container in CBAW will run. If you would like to make sure your json is valid before trying to run all of the containers, run `run.py` with the `--dryrun` flag. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
 
 ### cabinet variables
 

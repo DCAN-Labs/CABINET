@@ -8,28 +8,8 @@ from src.logger import LOGGER
 from src.utilities import valid_readable_json
 
 class ValidJargs:
-    def __init__(self) -> None:
-        args = self.get_args()
-        self.validate_parameter_json(args.parameter_json)
-
-    def get_jargs(self):
-        return self.j_args
-
-    def get_args(self):
-        """
-        :return args: Namespace object containing the command line arguments
-        """
-        parser = argparse.ArgumentParser("CABINET")
-
-        # Required positional arguments
-        parser.add_argument(
-            "parameter_json", type=valid_readable_json,
-            help=("Required. Valid path to existing readable parameter .JSON "
-                "file. See README.md and example parameter .JSON files for more "
-                "information on parameters.")
-        )
-        args = parser.parse_args()
-        return args
+    def __init__(self, json) -> None:
+        self.validate_parameter_json(json)
 
     def extract_from_json(self, json_path):
         """

@@ -6,11 +6,11 @@ import os
 from src.logger import LOGGER
 from src.valid_jargs_class import ValidJargs
 
-class Wrapper(ValidJargs):
+class Wrapper():
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, valid_jargs: ValidJargs) -> None:
         self.start_time = datetime.now()
+        self.j_args = valid_jargs.j_args
 
     def run_wrapper(self) -> None:
         LOGGER.info(f"Identified stages to be run: {self.j_args['cabinet']['stages']}")
