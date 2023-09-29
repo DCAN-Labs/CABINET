@@ -11,7 +11,6 @@ class ValidJargs:
     def __init__(self) -> None:
         args = self.get_args()
         self.validate_parameter_json(args.parameter_json)
-        print(self.j_args)
 
     def get_jargs(self):
         return self.j_args

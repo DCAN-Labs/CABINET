@@ -91,7 +91,6 @@ class Wrapper(ValidJargs):
     def run_all_stages(self):
         """
         Run stages sequentially as specified by user
-        :param j_args: Dictionary of all args needed by each stage
         """
         # ...run all stages that the user said to run
         success = True
@@ -112,7 +111,6 @@ class Wrapper(ValidJargs):
         '''
         Gathers arguments form parameter file, constructs container run command and runs it.
         :param stage: String, name of the stage to run
-        :param j_args: Dictionary, copy of j_args
         '''
         stage = self.j_args['stages'][stage_name]
         action = stage['action']

@@ -6,13 +6,13 @@ The parameter-jsons folder contains examples of parameter jsons that string toge
 
 ## Setting up the parameters.json
 
-To use CBAW, users will need to create a parameters json that contains the information about which containers will be run. The order of the containers in the parameter json is the order that the container will run them. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet` and `stages`. If you would like to make sure your json is valid before trying to run all of the containers, run `validate-param-json.py` with your json as the input. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
+To use CBAW, users will need to create a parameters json that contains the information about which containers will be run. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet`, which contains options for how CBAW will run and `stages` which contains options for how each container in CBAW will run. If you would like to make sure your json is valid before trying to run all of the containers, run `validate-param-json.py` with your json as the input. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
 
 ### cabinet variables
 
 `container_type`: Required; the type of containers you are running (`singularity` or `docker`).
 
-`stages`: Required; a list of stages to run in the order they should be run in.
+`stages`: Required; a list of stages to run in the order they should be run in. All stages listed here must have an entry in `stages` but not all entries in `stages` need to be listed here. This allows you to set up run commands for containers but not run them every time you run CBAW.
 
 `verbose`: Optional; value of true or false; if not specified, defaults to false.
 
@@ -61,6 +61,7 @@ Below is an example for how BIBSNet would be run.
         {
             "cabinet": {
                 "container_type": "singularity",
+                "stages": ['bibsnet']
                 "verbose": true,
                 "handle_missing_host_paths": "make_directories"
             },
