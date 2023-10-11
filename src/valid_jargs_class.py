@@ -4,7 +4,6 @@ import sys
 import json
 
 from src.logger import LOGGER
-from src.utilities import valid_readable_json
 
 class ValidJargs:
     def __init__(self, json) -> None:
