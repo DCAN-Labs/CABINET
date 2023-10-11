@@ -2,7 +2,6 @@ from datetime import datetime
 import os
 import sys
 import json
-import argparse
 
 from src.logger import LOGGER
 from src.utilities import valid_readable_json
