@@ -1,7 +1,7 @@
 {
     "cabinet": {
         "container_type": "singularity",
-        "stages": ["bibsnet", "nibabies", "xcpd", "lolcow"],
+        "stages": ["bibsnet", "nibabies", "xcpd"],
         "verbose": true,
         "handle_missing_host_paths": "make_directories",
         "log_directory": "/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/logs/"
@@ -141,13 +141,6 @@
                 "-vv": true,
                 "--participant-label": "470437" 
             }
-        },
-        "lolcow": {
-            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
-            "action": "exec",
-            "positional_args": [
-                "cowsay", "\"Thank you for testing CABINET\""
-            ]
         }
     }
 }

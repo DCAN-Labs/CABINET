@@ -1,8 +1,11 @@
-# CBAW
+# CABINET
 
-CBAW is a way to bind multiple containers together and run them with a single command. This is done by composing a parameters json that contains any necessary inputs for whichever containers your heart desires. With one command, CBAW will then run these containers one after the other to produce the desired outputs. 
+CABINET is a way to bind multiple containers together and run them with a single command. This is done by composing a parameters json that contains any necessary inputs for whichever containers your heart desires. With one command, CABINET will then run these containers one after the other to produce the desired outputs. 
 
-The parameter-jsons folder contains examples of parameter jsons that string together multiple containers. If you use CBAW for any containers that aren't in the parameter-jsons folder, please add your json as a resource for others to use.
+## Looking for BIBSnet?
+
+BIBSnet is a segmentation pipeline that historically had its development tied to the development of CABINET. If you used the DCAN Labs codebase named CABINET prior to October 2023 you were using the codebase we now call BIBSnet.
+[Find BIBSnet here](https://github.com/DCAN-Labs/BIBSnet).
 
 ## Arguments
 
@@ -14,13 +17,15 @@ The parameter-jsons folder contains examples of parameter jsons that string toge
 
 ## Setting up the parameters.json
 
-To use CBAW, users will need to create a parameters json that contains the information about which containers will be run. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet`, which contains options for how CBAW will run and `stages` which contains options for how each container in CBAW will run. If you would like to make sure your json is valid before trying to run all of the containers, run `run.py` with the `--dryrun` flag. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
+To use CABINET, users will need to create a parameters json that contains the information about which containers will be run. Any amount of containers can be added to the json. The json will have any necessary binds, arguments, and flags to run the container. There are two required keys: `cabinet`, which contains options for how CABINET will run and `stages` which contains options for how each container in CABINET will run. If you would like to make sure your json is valid before trying to run all of the containers, run `run.py` with the `--dryrun` flag. Before trying to run all of the containers, the main `run.py` script will also validate the json. If the json is invalid, it will not try to run the containers.
+
+The parameter-jsons folder contains examples of parameter jsons that string together multiple containers. If you use CABINET for any containers that aren't in the parameter-jsons folder, please add your json as a resource for others to use.
 
 ### cabinet variables
 
 `container_type`: Required; the type of containers you are running (`singularity` or `docker`).
 
-`stages`: Required; a list of stages to run in the order they should be run in. All stages listed here must have an entry in `stages` but not all entries in `stages` need to be listed here. This allows you to set up run commands for containers but not run them every time you run CBAW.
+`stages`: Required; a list of stages to run in the order they should be run in. All stages listed here must have an entry in `stages` but not all entries in `stages` need to be listed here. This allows you to set up run commands for containers but not run them every time you run CABINET.
 
 `verbose`: Optional; value of true or false; if not specified, defaults to false.
 
@@ -116,23 +121,23 @@ Below is an example for how BIBSNet would be run.
 
 Once you have created your parameter.json, run `run.py` with your json as the single argument. 
 
-At the beginning of each stage, CBAW will print the name of the stage and at which time it started. At the end of the stage, it will print out how long that stage took to run and if it completed successfully or failed. Right now, even if a stage fails, it will continue to try to run the remaining containers. If you have the `verbose` option set to true, at the very beginning it will print the validated JSON and during each container it will print the singularity commands it is running. 
+At the beginning of each stage, CABINET will print the name of the stage and at which time it started. At the end of the stage, it will print out how long that stage took to run and if it completed successfully or failed. Right now, even if a stage fails, it will continue to try to run the remaining containers. If you have the `verbose` option set to true, at the very beginning it will print the validated JSON and during each container it will print the singularity commands it is running. 
 
 After it runs all of the containers, it will print out how long the entire process took to run and if every stage completed successfully or if some stages failed. Right now, it will not tell you which stages failed at the end, you will have to look at the error and output logs to determine why and where it failed. 
 
 Below is an example output from running bibsnet and lolcow. 
 
-    INFO 2023-09-08 16:22:18,049: Getting Arguments from arg file: /panfs/jay/groups/6/faird/tikal004/CBAW/parameter-jsons/bibsnet-nibabies-xcpd.json
+    INFO 2023-09-08 16:22:18,049: Getting Arguments from arg file: /panfs/jay/groups/6/faird/tikal004/CABINET/parameter-jsons/bibsnet-nibabies-xcpd.json
 
     INFO 2023-09-08 16:22:18,052: Validating parameter JSON
 
-    INFO 2023-09-08 16:22:18,082: Made directory /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/bibsnet/
+    INFO 2023-09-08 16:22:18,082: Made directory /home/feczk001/shared/projects/segpipeline_testing/Barry_test/CABINET-test/derivatives/bibsnet/
 
-    INFO 2023-09-08 16:22:18,092: Parameter JSON /panfs/jay/groups/6/faird/tikal004/CBAW/parameter-jsons/bibsnet-nibabies-xcpd.json is valid.
+    INFO 2023-09-08 16:22:18,092: Parameter JSON /panfs/jay/groups/6/faird/tikal004/CABINET/parameter-jsons/bibsnet-nibabies-xcpd.json is valid.
     Validated JSON: {'cabinet': {'container_type': 'singularity', 'verbose': True, 'handle_missing_host_paths': 'make_directories'}, 
     'stages': [{'name': 'bibsnet', 'container_filepath': '/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif', 'container_args': {'--cleanenv': True, '--nv': True}, 
-    'binds': [{'host_path': '/home/faird/shared/data/BCP-MVP_BIBSNet/input/', 'container_path': '/input'}, {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/', 'container_path': '/output'}, 
-    {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/', 'container_path': '/work'}], 'positional_args': ['/input', '/output', 'participant'], 
+    'binds': [{'host_path': '/home/faird/shared/data/BCP-MVP_BIBSNet/input/', 'container_path': '/input'}, {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cabinet-test/derivatives/', 'container_path': '/output'}, 
+    {'host_path': '/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cabinet-test/work/', 'container_path': '/work'}], 'positional_args': ['/input', '/output', 'participant'], 
     'flags': {'--parameter-json': '/home/cabinet/parameter-file-container.json', '-start': 'prebibsnet', '-end': 'postbibsnet', '-v': True, '--participant-label': '123456', '-w': '/work'}, 'action': 'run'}, 
     {'name': 'lolcow', 'container_filepath': '/home/faird/tikal004/lolcow.sif', 'action': 'exec', 'positional_args': ['cowsay', '"Thank you for testing CABINET"'], 'container_args': {}, 'binds': [], 'flags': {}}]}
 
@@ -141,8 +146,8 @@ Below is an example output from running bibsnet and lolcow.
     INFO 2023-09-08 16:22:18,092: Now running stage: bibsnet
 
     INFO 2023-09-08 16:22:18,093: run command for bibsnet:
-    singularity run -B /home/faird/shared/data/BCP-MVP_BIBSNet/input/:/input -B /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/:/output 
-    -B /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/:/work --cleanenv --nv 
+    singularity run -B /home/faird/shared/data/BCP-MVP_BIBSNet/input/:/input -B /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cabinet-test/derivatives/:/output 
+    -B /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cabinet-test/work/:/work --cleanenv --nv 
     /home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif /input /output participant --parameter-json /home/cabinet/parameter-file-container.json -start prebibsnet -end postbibsnet -v --participant-label 123456 -w /work
 
     INFO 2023-09-08 22:00:30,762: bibsnet failed. Time elapsed since bibsnet started: 1:05:52.760840
