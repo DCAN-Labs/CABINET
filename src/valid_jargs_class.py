@@ -50,7 +50,7 @@ class ValidJargs:
                         LOGGER.error(f"Parameters for {requested_stage} not found. Please add parameters for {requested_stage} to 'stages'.")
                         is_valid = False
                     else:
-                        is_valid = self.validate_stage(requested_stage)
+                        is_valid = is_valid and self.validate_stage(requested_stage)
 
         # if stages key is valid, validate binds/mounts
         if is_valid:
