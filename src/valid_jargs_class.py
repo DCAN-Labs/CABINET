@@ -61,7 +61,7 @@ class ValidJargs:
                 is_valid = is_valid and self.validate_binds(stage, bind_type)
 
         if not is_valid:
-            LOGGER.error(f"Parameter JSON {json_path} is invalid. See examples directory for examples.")
+            LOGGER.error(f"Parameter JSON {json_path} is invalid. See parameter-jsons directory for examples.")
             sys.exit()
         elif self.j_args['cabinet']['verbose']:
             LOGGER.info(f"Parameter JSON {json_path} is valid.\nValidated JSON: {self.j_args}")
