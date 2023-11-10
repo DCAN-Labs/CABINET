@@ -1,0 +1,22 @@
+{
+    "cabinet": {
+        "container_type": "singularity",
+        "stages": ["lolcow", "dockerfail", "lolcow", "lolcow-exec"]
+    },
+
+    "stages": {
+        "lolcow": {
+            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif"
+        },
+        "dockerfail": {
+            "container_filepath": "/home/faird/tikal004/sif-files/dockerfail.sif"
+        },
+        "lolcow-exec": {
+            "action": "exec",
+            "container_filepath": "/home/faird/tikal004/sif-files/lolcow.sif",
+            "positional_args": [
+                "cowsay", "Thank you for testing CABINET"
+            ]
+        }
+    }
+}
