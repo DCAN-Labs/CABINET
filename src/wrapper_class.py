@@ -62,22 +62,18 @@ class Wrapper():
                     all of which are used by this function
         :return: List of most a_dict optional arguments and their values
         """
-        LOGGER.info("get_opt_args")
         optional_args = []
         for arg in a_dict.keys():
             if isinstance(a_dict[arg], list):
-                LOGGER.info(f"list: {arg}")
                 optional_args.append(arg)
                 for el in a_dict[arg]:
                     optional_args.append(str(el))
             elif isinstance(a_dict[arg], bool):
-                LOGGER.info(f"bool: {arg}")
                 if a_dict[arg]:
                     optional_args.append(arg)
             else:
                 optional_args.append(arg)
                 optional_args.append(str(a_dict[arg]))
-                LOGGER.info(arg)
         return optional_args
 
     def log_stage_finished(self, stage_name, event_time, success):
