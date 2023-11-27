@@ -6,12 +6,12 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=240gb
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=tikal004@umn.edu
+#SBATCH --mail-user={MAIL_USER}
 #SBATCH -p v100
-#SBATCH -o /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/logs/%A_cbaw.out
-#SBATCH -e /home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/logs/%A_cbaw.err
+#SBATCH -o /path/to/logs/%A_cabinet.out
+#SBATCH -e /path/to/logs/%A_cabinet.err
 #SBATCH -J cabinet
-#SBATCH -A feczk001
+#SBATCH -A {ACCOUNT}
 
 module load singularity
 module load python
