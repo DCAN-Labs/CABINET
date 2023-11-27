@@ -179,7 +179,7 @@ class ValidJargs:
             options["binds"] = {
                 "required": False,
                 "type": list,
-                "default": {}
+                "default": []
             }
 
         elif container_type == "docker":
@@ -190,7 +190,7 @@ class ValidJargs:
             options["mounts"] = {
                 "required": False,
                 "type": list,
-                "default": {}
+                "default": []
             }
 
         for option, requirements in options.items():
