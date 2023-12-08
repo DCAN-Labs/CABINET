@@ -4,12 +4,12 @@
         "stages": ["bibsnet", "nibabies", "xcpd"],
         "verbose": true,
         "handle_missing_host_paths": "make_directories",
-        "log_directory": "/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/logs/"
+        "log_directory": "/path/to/cabinet/logs/"
     },
 
     "stages": {
         "bibsnet": {
-            "container_filepath": "/home/faird/shared/code/internal/pipelines/cabinet_container/cabinet_v2.4.3.sif",
+            "container_filepath": "/home/faird/shared/code/internal/pipelines/bibsnet_container/bibsnet_v3.0.1.sif",
             "container_args": {
                 "--cleanenv": true,
                 "--nv": true
@@ -20,11 +20,11 @@
                     "container_path":"/input"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/",
+                    "host_path":"/path/to/derivatives/",
                     "container_path":"/output"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/",
+                    "host_path":"/path/to/work/",
                     "container_path":"/work"
                 }
             ],
@@ -32,11 +32,10 @@
                 "/input", "/output", "participant"
             ],
             "flags": {
-                "--parameter-json":"/home/cabinet/parameter-file-container.json",
                 "-start":"prebibsnet",
                 "-end":"postbibsnet",
                 "-v": true,
-                "--participant-label":"470437",
+                "--participant-label":"SUBJECT-ID",
                 "-w":"/work"
             }
         },
@@ -51,11 +50,11 @@
                     "container_path":"/bids_dir"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/nibabies/",
+                    "host_path":"/path/to/derivatives/nibabies/",
                     "container_path":"/output_dir"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/",
+                    "host_path":"/path/to/work/",
                     "container_path":"/work"
                 },
                 {
@@ -63,7 +62,7 @@
                     "container_path":"/opt/freesurfer/license.txt"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/bibsnet/",
+                    "host_path":"/path/to/derivatives/bibsnet/",
                     "container_path":"/derivatives"
                 }
             ],
@@ -73,14 +72,13 @@
             "flags": {
                 "--project-goodvoxels": true,
                 "--omp-nthreads": 3,
-                "--resource-monitor": true,
                 "--cifti-output": "91k",
                 "-vv": true,
                 "-w": "/work", 
                 "--fd-radius": 35,
                 "--derivatives": "/derivatives",
                 "--age-months": 1,
-                "--participant-label":"470437",
+                "--participant-label":"SUBJECT-ID",
                 "--surface-recon-method": "mcribs",
                 "--output-spaces": "MNI152NLin6Asym:res-2"
             }
@@ -92,7 +90,7 @@
             },
             "binds": [
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/work/",
+                    "host_path":"/path/to/work/",
                     "container_path":"/work"
                 },
                 {
@@ -100,7 +98,7 @@
                     "container_path":"/opt/freesurfer/license.txt"
                 },
                 {
-                    "host_path":"/home/feczk001/shared/projects/segpipeline_testing/Barry_test/cbaw-test/derivatives/",
+                    "host_path":"/path/to/derivatives/",
                     "container_path":"/output_dir"
                 },
                 {
@@ -139,7 +137,7 @@
                 "-f": 0.3,
                 "-m": true,
                 "-vv": true,
-                "--participant-label": "470437" 
+                "--participant-label": "SUBJECT-ID" 
             }
         }
     }

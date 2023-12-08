@@ -64,13 +64,16 @@ class Wrapper():
         """
         optional_args = []
         for arg in a_dict.keys():
-            if a_dict[arg]:
+            if isinstance(a_dict[arg], list):
                 optional_args.append(arg)
-                if isinstance(a_dict[arg], list):
-                    for el in a_dict[arg]:
-                        optional_args.append(str(el))
-                elif not isinstance(a_dict[arg], bool):
-                    optional_args.append(str(a_dict[arg]))
+                for el in a_dict[arg]:
+                    optional_args.append(str(el))
+            elif isinstance(a_dict[arg], bool):
+                if a_dict[arg]:
+                    optional_args.append(arg)
+            else:
+                optional_args.append(arg)
+                optional_args.append(str(a_dict[arg]))
         return optional_args
 
     def log_stage_finished(self, stage_name, event_time, success):

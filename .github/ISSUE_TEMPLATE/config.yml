@@ -1,5 +1,6 @@
 blank_issues_enabled: true
 contact_links:
-  - name: Questions
-    url: https://github.com/CABINET
-    about: Please ask and answer questions related to CABINET usage here.
+  - name: Documentation
+    url: https://github.com/DCAN-Labs/CABINET#readme
+    about: CABINET usage instructions
+

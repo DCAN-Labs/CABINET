@@ -2,10 +2,8 @@ from datetime import datetime
 import os
 import sys
 import json
-import argparse
 
 from src.logger import LOGGER
-from src.utilities import valid_readable_json
 
 class ValidJargs:
     def __init__(self, json) -> None:
@@ -52,7 +50,7 @@ class ValidJargs:
                         LOGGER.error(f"Parameters for {requested_stage} not found. Please add parameters for {requested_stage} to 'stages'.")
                         is_valid = False
                     else:
-                        is_valid = self.validate_stage(requested_stage)
+                        is_valid = is_valid and self.validate_stage(requested_stage)
 
         # if stages key is valid, validate binds/mounts
         if is_valid:
@@ -63,7 +61,7 @@ class ValidJargs:
                 is_valid = is_valid and self.validate_binds(stage, bind_type)
 
         if not is_valid:
-            LOGGER.error(f"Parameter JSON {json_path} is invalid. See examples directory for examples.")
+            LOGGER.error(f"Parameter JSON {json_path} is invalid. See parameter-jsons directory for examples.")
             sys.exit()
         elif self.j_args['cabinet']['verbose']:
             LOGGER.info(f"Parameter JSON {json_path} is valid.\nValidated JSON: {self.j_args}")
