@@ -12,8 +12,8 @@ Test = Wrapper(Jargs)
 
 def test_run_stage_pass():
 
-    assert Test.run_stage("lolcow") == True
+    assert Test.run_stage("lolcow")
 
 def test_run_stage_fail():
     
-    assert Test.run_stage("dockerfail") == False
+    assert not Test.run_stage("dockerfail")
