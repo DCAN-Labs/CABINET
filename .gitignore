@@ -1,4 +1,5 @@
 /temp/
 /src/__pycache__/
 /test-param-jsons/
-/__pycache__
+/__pycache__/
+/.pytest_cache/
